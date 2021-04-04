@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "530224808859",
+    "project_id": "mitarbeiter-app-96789",
+    "storage_bucket": "mitarbeiter-app-96789.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530224808859:android:1abbb836a4256df1f3573e",
+        "android_client_info": {
+          "package_name": "com.ecoexpress.logbuch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530224808859-4g5vkcm2iuu63e4tm27fce8alpdvjrao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9JvDjbLOyGZ_6F9iL--EJhU7FXnoIHbI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530224808859-4g5vkcm2iuu63e4tm27fce8alpdvjrao.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
