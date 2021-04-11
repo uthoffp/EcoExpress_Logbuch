@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.pinCode = getIntent().getIntExtra("pinCode", 0);
-        this.dateFormat = new SimpleDateFormat("dd,MM,yyyy");
+        this.dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         this.timeFormat = new SimpleDateFormat("HH:mm");
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
