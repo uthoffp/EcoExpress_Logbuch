@@ -9,15 +9,11 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -50,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
         //Check for Location Permission
         if (!hasLocationPermission()) {
             Toast.makeText(this,
-                    "Unable to select location without required Permission. Please restart the application.", Toast.LENGTH_LONG).show();
-
+                    "Unable to select location without required Permission. Please restart the application.",
+                    Toast.LENGTH_LONG).show();
+            return;
         }
 
         //set Button Color + Location
@@ -76,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
             String longitude = Double.toString(gpsLocation.getLongitude());
             strGpsLocation = latitude + ", " + longitude;
         }
-
-
-        // Database insert
-        Dataset dataset = new Dataset(date, time, location, "[GPS Placeholder]");
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Logbuch");
-        //databaseReference.child(Integer.toString(pinCode)).child(dataset.getDate()).child(dataset.getTime()).setValue(dataset);
 
         // Log Output
         String output = location + ", " + time + ", [GPS Placeholder]";
