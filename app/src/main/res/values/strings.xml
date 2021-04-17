@@ -2,11 +2,11 @@
     <string name="app_name">Logbuch</string>
 
     <!-- Database Connection Infos -->
-    <string name="ip">localhost</string>
+    <string name="ip">msupportsql.database.windows.net</string>
     <string name="port">1433</string>
     <string name="classes">net.sourcefrog.jtds.jdbc.Driver</string>
-    <string name="database">db_logbuch</string>
-    <string name="username">admin</string>
-    <string name="password">root</string>
+    <string name="database">MitarbeiterApp</string>
+    <string name="username">mwolter</string>
+    <string name="password">nKvLkEiMA7N0Ixl45Dzh</string>
 
 </resources>

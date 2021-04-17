@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +41,15 @@ public class MainActivity extends AppCompatActivity {
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         requestLocationPermission();
+
+
+        DatabaseController databaseController = new DatabaseController(getApplicationContext());
+        try {
+            databaseController.getEmployees();
+            databaseController.testInsert();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     public void onClick(View view) {
