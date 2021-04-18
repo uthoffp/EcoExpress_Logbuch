@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Time
         Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
-        String strDate = dateFormat.format(date);
+        DateFormat timeFormat = new SimpleDateFormat("hh:mm");
+        String strDate = timeFormat.format(date);
 
         // set Widgets
         TextView txtLocation = dialogView.findViewById(R.id.dialog_txt_location);
@@ -93,13 +93,13 @@ public class MainActivity extends AppCompatActivity {
         txtDate.setText(strDate + " Uhr");
         Button btnContinue = dialogView.findViewById(R.id.dialog_btn_continue);
         btnContinue.setOnClickListener(v -> {
-            new AlertDialog.Builder(getApplicationContext())
-                    .setTitle("Abfahrt?")
-                    .setMessage("")
-                    .setPositiveButton("Abfahrt", (dialog, which) -> {
+            new AlertDialog.Builder(this)   //application context crashes
+                    .setTitle("Wieder Unterwegs?")
+                    .setPositiveButton("Weiter", (dialog, which) -> {
+                        
                         alertDialog.dismiss();
                     })
-                    .setNegativeButton("", null)
+                    .setNegativeButton("Abbrechen", null)
                     .show();
         });
     }
