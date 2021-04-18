@@ -1,5 +1,6 @@
 package com.ecoexpress.logbuch;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,49 +8,40 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.SQLException;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    private int pinCode;
-    private Calendar calendar;
     private LocationManager locationManager;
-    private DateFormat dateFormat;
-    private DateFormat timeFormat;
     private Button previousBtn;
-    private String time;
-    private String date;
+    private DatasetController datasetController;
+    private Calendar calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        this.pinCode = getIntent().getIntExtra("pinCode", 0);
-        this.dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        this.timeFormat = new SimpleDateFormat("HH:mm");
-        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         requestLocationPermission();
 
-
-        DatabaseController databaseController = new DatabaseController(getApplicationContext());
-        try {
-            databaseController.getEmployees();
-            databaseController.testInsert();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        int[] userIds = getIntent().getIntArrayExtra("userIds");
+        this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        this.datasetController = new DatasetController(getApplicationContext(), userIds);
+        this.calendar = Calendar.getInstance();
     }
 
     public void onClick(View view) {
@@ -61,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        //set Button Color + Location
+        // set Button Color + Location
         Button btn = findViewById(view.getId());
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
         String location = btn.getText().toString();
@@ -70,26 +62,49 @@ public class MainActivity extends AppCompatActivity {
         }
         previousBtn = btn;
 
-        // Date + Time
-        calendar = Calendar.getInstance();
-        time = timeFormat.format(calendar.getTime());
-        date = dateFormat.format(calendar.getTime());
-
-        // GPS
-        String strGpsLocation = "GPS not Found";
-        Location gpsLocation = getCurrentLocation();
-        if(gpsLocation != null) {
-            String latitude = Double.toString(gpsLocation.getLatitude());
-            String longitude = Double.toString(gpsLocation.getLongitude());
-            strGpsLocation = latitude + ", " + longitude;
-        }
-
-        // Log Output
-        String output = location + ", " + time + ", [GPS Placeholder]";
-        Toast.makeText(getApplicationContext(), output, Toast.LENGTH_SHORT).show();
+        openDialog(location);
     }
 
-    //Requests Permission for the Location of the current Device
+    private void openDialog(String strLocation) {
+        // create Dialog
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View dialogView = layoutInflater.inflate(R.layout.dialog_location, null);
+        dialogBuilder.setView(dialogView);
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        // GPS
+        Location gpsLocation = getCurrentLocation();
+        if (gpsLocation != null) {
+            double latitude = gpsLocation.getLatitude();
+            double longitude = gpsLocation.getLongitude();
+        }
+
+        // Time
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        String strDate = dateFormat.format(date);
+
+        // set Widgets
+        TextView txtLocation = dialogView.findViewById(R.id.dialog_txt_location);
+        txtLocation.setText(strLocation);
+        TextView txtDate = dialogView.findViewById(R.id.dialog_txt_time);
+        txtDate.setText(strDate + " Uhr");
+        Button btnContinue = dialogView.findViewById(R.id.dialog_btn_continue);
+        btnContinue.setOnClickListener(v -> {
+            new AlertDialog.Builder(getApplicationContext())
+                    .setTitle("Abfahrt?")
+                    .setMessage("")
+                    .setPositiveButton("Abfahrt", (dialog, which) -> {
+                        alertDialog.dismiss();
+                    })
+                    .setNegativeButton("", null)
+                    .show();
+        });
+    }
+
+    //requests permission for the location of the current device
     private void requestLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -100,11 +115,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean hasLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return true;
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     @SuppressLint("MissingPermission")

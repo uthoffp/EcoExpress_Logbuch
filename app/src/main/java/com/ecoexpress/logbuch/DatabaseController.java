@@ -11,15 +11,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
 public class DatabaseController extends ContextWrapper {
     private Connection connection;
+    private DateFormat dateFormat;
+    private DateFormat timeFormat;
 
     public DatabaseController(Context context) {
         super(context);
+        this.dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        this.timeFormat = new SimpleDateFormat("HH:mm");
         initConnection();
     }
 

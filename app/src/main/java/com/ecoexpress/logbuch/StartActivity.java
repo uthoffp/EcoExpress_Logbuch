@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-public class PinActivity extends AppCompatActivity {
+public class StartActivity extends AppCompatActivity {
     private final static int pincode = 1234;
     private EditText etPinCode;
 
