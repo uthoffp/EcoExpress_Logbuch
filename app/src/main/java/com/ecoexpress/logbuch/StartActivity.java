@@ -15,7 +15,7 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
-        etPinCode =findViewById(R.id.et_pin);
+        etPinCode = findViewById(R.id.et_pin);
     }
 
     public void onLogin(View view) {

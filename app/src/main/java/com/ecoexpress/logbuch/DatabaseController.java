@@ -6,7 +6,9 @@ import android.os.StrictMode;
 import android.widget.Toast;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,18 +16,14 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 public class DatabaseController extends ContextWrapper {
     private Connection connection;
-    private DateFormat dateFormat;
-    private DateFormat timeFormat;
 
     public DatabaseController(Context context) {
         super(context);
-        this.dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        this.timeFormat = new SimpleDateFormat("HH:mm");
+
         initConnection();
     }
 
@@ -47,11 +45,37 @@ public class DatabaseController extends ContextWrapper {
         }
     }
 
-    public int insertDataset(int[] employees, int locationId, Date date, Time time, int distance, Time duration) throws SQLException {
-        Statement statement = connection.createStatement();
-        int id = statement.executeUpdate("");
-        statement.close();
-        return id;
+    public int insertDataset(int[] employees, int locationId, java.util.Date startTime, java.util.Date endTime,
+                             int duration, double latitude, double longitude, int distance) throws SQLException {
+        String insert = "INSERT INTO dataset (date, start_time, end_time, duration, latitude, longitude, distance, location_id)  " +
+                "VALUES(?,?,?,?,?,?,?,?)";
+        PreparedStatement statement = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+        statement.setDate(1, new java.sql.Date(startTime.getTime()));
+        statement.setTime(2, new Time(startTime.getTime()));
+        statement.setTime(3, new Time(endTime.getTime()));
+        statement.setInt(4, duration);
+        statement.setDouble(5, latitude);
+        statement.setDouble(6, longitude);
+        statement.setInt(7, distance);
+        statement.setInt(8, locationId);
+
+        int affectedRows = statement.executeUpdate();
+        if (affectedRows == 0) return 0;
+
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        long id = 0;
+        if(generatedKeys.next()){
+            id = generatedKeys.getLong(1);
+        }
+        return (int) id;
+    }
+
+    public void insertUserInDataset(int userId, int locationId) throws SQLException {
+        String insert = "";
+        PreparedStatement statement = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
+        statement.setInt(1, userId);
+        statement.setInt(2, locationId);
+        statement.executeUpdate();
     }
 
     public HashMap<Integer, String> getEmployees() throws SQLException {
@@ -92,19 +116,24 @@ public class DatabaseController extends ContextWrapper {
         }
     }
 
-    public void testInsert() {
-        try {
-            Statement statement = connection.createStatement();
-            int affectedRows = statement.executeUpdate("INSERT INTO employee (name) VALUES ('TestUser')");
-            statement.close();
-            if (affectedRows > 0) {
-                Toast.makeText(getApplicationContext(), "Insert successful", Toast.LENGTH_SHORT).show();
-            }
+    public void testInsert() throws SQLException {
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO employee (name) VALUES(?)",
+                Statement.RETURN_GENERATED_KEYS);
+        String name = "testUserName123";
+        statement.setString(1, name);
+        // ...
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        int affectedRows = statement.executeUpdate();
+
+        if (affectedRows == 0) {
+            return;
         }
 
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        long id = 0;
+        if(generatedKeys.next()){
+            id = generatedKeys.getLong(1);
+        }
     }
 
 }

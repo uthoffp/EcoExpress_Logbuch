@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.lang.reflect.Array;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,18 +33,16 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private Button previousBtn;
     private DatasetController datasetController;
-    private Calendar calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         requestLocationPermission();
-
-        int[] userIds = getIntent().getIntArrayExtra("userIds");
+        int[] userIds = new int[0];
+        userIds = getIntent().getIntArrayExtra("userIds");
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         this.datasetController = new DatasetController(getApplicationContext(), userIds);
-        this.calendar = Calendar.getInstance();
     }
 
     public void onClick(View view) {
@@ -76,9 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
         // GPS
         Location gpsLocation = getCurrentLocation();
+        double latitude = 0;
+        double longitude = 0;
         if (gpsLocation != null) {
-            double latitude = gpsLocation.getLatitude();
-            double longitude = gpsLocation.getLongitude();
+            latitude = gpsLocation.getLatitude();
+            longitude = gpsLocation.getLongitude();
         }
 
         // Time
@@ -92,12 +95,24 @@ public class MainActivity extends AppCompatActivity {
         TextView txtDate = dialogView.findViewById(R.id.dialog_txt_time);
         txtDate.setText(strDate + " Uhr");
         Button btnContinue = dialogView.findViewById(R.id.dialog_btn_continue);
+
+        // continue btn click
+        double finalLatitude = latitude;
+        double finalLongitude = longitude;
         btnContinue.setOnClickListener(v -> {
             new AlertDialog.Builder(this)   //application context crashes
                     .setTitle("Wieder Unterwegs?")
                     .setPositiveButton("Weiter", (dialog, which) -> {
-                        
-                        alertDialog.dismiss();
+                        try {
+                            datasetController.writeNewDataset(
+                                    new com.ecoexpress.logbuch.Location(1, strLocation, finalLatitude, finalLongitude),
+                                    date, finalLatitude, finalLongitude);
+                            alertDialog.dismiss();
+                        } catch (SQLException throwables) {
+                            Toast.makeText(this, "Please Check your Network Connection.", Toast.LENGTH_LONG).show();
+                            throwables.printStackTrace();
+                        }
+
                     })
                     .setNegativeButton("Abbrechen", null)
                     .show();
