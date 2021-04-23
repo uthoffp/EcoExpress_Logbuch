@@ -44,7 +44,7 @@ public class DatabaseController extends ContextWrapper {
         }
     }
 
-    public int insertDataset(int[] employees, int locationId, java.util.Date startTime, java.util.Date endTime,
+    public int insertDataset(int locationId, java.util.Date startTime, java.util.Date endTime,
                              int duration, double latitude, double longitude, int distance) throws SQLException {
         String insert = "INSERT INTO dataset (date, start_time, end_time, duration, latitude, longitude, distance, location_id)  " +
                 "VALUES(?,?,?,?,?,?,?,?)";

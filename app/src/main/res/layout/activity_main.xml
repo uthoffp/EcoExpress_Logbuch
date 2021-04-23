@@ -37,14 +37,13 @@
                 android:text="Bauhaus" />
 
             <Button
-                android:id="@+id/unterwegs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_weight="1"
-                android:onClick="onClick"
-                android:text="Unterwegs" />
+                    android:id="@+id/unterwegs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_weight="1"
+                    android:text="Unterwegs" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -100,7 +99,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_weight="0.5"
                     android:onClick="onClick"
-                    android:text="Danzieger" />
+                    android:text="Danziger" />
             </LinearLayout>
 
             <LinearLayout
@@ -117,7 +116,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_weight="0.5"
                     android:onClick="onClick"
-                    android:text="Greiswalder" />
+                    android:text="Greifswalder" />
 
                 <Button
                     android:id="@+id/btn6"
@@ -128,7 +127,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_weight="0.5"
                     android:onClick="onClick"
-                    android:text="Hermann" />
+                    android:text="Herman" />
             </LinearLayout>
 
             <LinearLayout
@@ -145,7 +144,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_weight="0.5"
                     android:onClick="onClick"
-                    android:text="Hauptstraße" />
+                    android:text="Hauptstrasse" />
 
                 <Button
                     android:id="@+id/btn8"
@@ -173,7 +172,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_weight="0.5"
                     android:onClick="onClick"
-                    android:text="Leibnitz" />
+                    android:text="Leibniz" />
 
                 <Button
                     android:id="@+id/btn10"
@@ -212,7 +211,7 @@
                     android:layout_marginRight="12dp"
                     android:layout_weight="0.5"
                     android:onClick="onClick"
-                    android:text="Stettiner " />
+                    android:text="Stettiner" />
             </LinearLayout>
 
             <LinearLayout

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -58,6 +59,10 @@ public class StartActivity extends AppCompatActivity {
     }
 
     public void onContinue(View view) {
+        if(users.isEmpty()) {
+            Toast.makeText(this, "Es muss mindestens ein Mitarbeiter ausgewählt werden!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Intent intent = new Intent(this, MainActivity.class);
         int[] userarr = new int[users.size()];
         for (int i = 0; i < users.size(); i++) {

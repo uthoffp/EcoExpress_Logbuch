@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAway;
     private DatasetController datasetController;
     private long awayTime;
+    private com.ecoexpress.logbuch.Location awayLoc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
         this.datasetController = new DatasetController(getApplicationContext(), userIds);
         this.btnAway = findViewById(R.id.unterwegs);
         this.btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
-        awayTime = new Date().getTime();
+        this.awayTime = new Date().getTime();
+        this.awayLoc = new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0);
     }
 
     public void onClick(View view) {
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void openDialog(String strLocation) {
         // Insert away Time to db
-        datasetController.writeNewDataset(1, );
+        datasetController.writeNewDataset(awayLoc,new Date(awayTime), 0, 0);
 
         // create Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -105,16 +107,11 @@ public class MainActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)   //application context crashes
                     .setTitle("Wieder Unterwegs?")
                     .setPositiveButton("Weiter", (dialog, which) -> {
-                        try {
-                            datasetController.writeNewDataset(
-                                    new com.ecoexpress.logbuch.Location(1, strLocation, finalLatitude, finalLongitude),
-                                    date, finalLatitude, finalLongitude);
-                            alertDialog.dismiss();
-                        } catch (SQLException throwables) {
-                            Toast.makeText(this, "Please Check your Network Connection.", Toast.LENGTH_LONG).show();
-                            throwables.printStackTrace();
-                        }
-
+                        datasetController.writeNewDataset(
+                                new com.ecoexpress.logbuch.Location(1, strLocation, finalLatitude, finalLongitude),
+                                date, finalLatitude, finalLongitude);
+                        awayTime = new Date().getTime();
+                        alertDialog.dismiss();
                     })
                     .setNegativeButton("Abbrechen", null)
                     .show();
