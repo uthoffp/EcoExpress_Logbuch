@@ -23,11 +23,10 @@ public class DatabaseController extends ContextWrapper {
 
     public DatabaseController(Context context) {
         super(context);
-
         initConnection();
     }
 
-    private void initConnection() {
+    public void initConnection() {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -71,7 +70,7 @@ public class DatabaseController extends ContextWrapper {
     }
 
     public void insertUserInDataset(int userId, int locationId) throws SQLException {
-        String insert = "";
+        String insert = "INSERT INTO employee_in_dataset VALUES (?,?);";
         PreparedStatement statement = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
         statement.setInt(1, userId);
         statement.setInt(2, locationId);

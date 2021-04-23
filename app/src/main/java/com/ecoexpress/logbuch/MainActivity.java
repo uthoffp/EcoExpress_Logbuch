@@ -31,18 +31,21 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
-    private Button previousBtn;
+    private Button btnAway;
     private DatasetController datasetController;
+    private long awayTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         requestLocationPermission();
-        int[] userIds = new int[0];
-        userIds = getIntent().getIntArrayExtra("userIds");
+        int[] userIds = getIntent().getIntArrayExtra("userIds");
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         this.datasetController = new DatasetController(getApplicationContext(), userIds);
+        this.btnAway = findViewById(R.id.unterwegs);
+        this.btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
+        awayTime = new Date().getTime();
     }
 
     public void onClick(View view) {
@@ -57,16 +60,15 @@ public class MainActivity extends AppCompatActivity {
         // set Button Color + Location
         Button btn = findViewById(view.getId());
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
+        btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
         String location = btn.getText().toString();
-        if (previousBtn != null) {
-            previousBtn.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
-        }
-        previousBtn = btn;
-
         openDialog(location);
     }
 
     private void openDialog(String strLocation) {
+        // Insert away Time to db
+        datasetController.writeNewDataset(1, );
+
         // create Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater layoutInflater = this.getLayoutInflater();

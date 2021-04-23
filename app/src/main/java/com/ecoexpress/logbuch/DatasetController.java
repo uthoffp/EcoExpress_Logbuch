@@ -12,9 +12,6 @@ import java.util.Date;
 
 public class DatasetController extends ContextWrapper {
     private int[] userId;
-    private Calendar calendar;
-    private DateFormat dateFormat;
-    private DateFormat timeFormat;
     private DatabaseController database;
     private ArrayList<Location> locations;
 
@@ -23,9 +20,6 @@ public class DatasetController extends ContextWrapper {
         super(context);
         this.database = new DatabaseController(context);
         this.userId = userId;
-        this.calendar = Calendar.getInstance();
-        this.dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        this.timeFormat = new SimpleDateFormat("HH:mm");
         try {
             this.locations = database.getLocations();
         } catch (SQLException throwables) {
@@ -35,14 +29,13 @@ public class DatasetController extends ContextWrapper {
 
     public void writeNewDataset(Location location, Date startTime, double latitude, double longitude) throws SQLException {
         Date endTime = new Date();
-        String strDate = dateFormat.format(startTime);
         int duration = duration(startTime, endTime);
         int distance = distance(latitude, longitude, location.getLatitude(), location.getLongitude());
 
         int datasetId = database.insertDataset(userId, (int) location.getId(), startTime, endTime, duration,
                 latitude, longitude, distance);
 
-        for(int i=0; i<0; i++) {
+        for (int i = 0; i < userId.length; i++) {
             database.insertUserInDataset(userId[i], datasetId);
         }
     }
