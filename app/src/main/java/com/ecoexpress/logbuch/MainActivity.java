@@ -8,22 +8,18 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.lang.reflect.Array;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private DatasetController datasetController;
     private long awayTime;
     private com.ecoexpress.logbuch.Location awayLoc;
+    private Button btnPrev;
+    private boolean logout = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +62,13 @@ public class MainActivity extends AppCompatActivity {
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
         btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
         String location = btn.getText().toString();
+        btnPrev = btn;
         openDialog(location);
     }
 
     private void openDialog(String strLocation) {
         // Insert away Time to db
-        datasetController.writeNewDataset(awayLoc,new Date(awayTime), 0, 0);
+        datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0);
 
         // create Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -77,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         View dialogView = layoutInflater.inflate(R.layout.dialog_location, null);
         dialogBuilder.setView(dialogView);
         AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
 
         // GPS
@@ -111,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
                                 new com.ecoexpress.logbuch.Location(1, strLocation, finalLatitude, finalLongitude),
                                 date, finalLatitude, finalLongitude);
                         awayTime = new Date().getTime();
+                        btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
+                        btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
                         alertDialog.dismiss();
                     })
                     .setNegativeButton("Abbrechen", null)
@@ -152,5 +155,37 @@ public class MainActivity extends AppCompatActivity {
             final_loc = network_loc;
         }
         return final_loc;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.logoutmenue, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // handle button activities
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.btn_logout) {
+            new AlertDialog.Builder(this)   //application context crashes
+                    .setTitle("Feierabend machen?")
+                    .setPositiveButton("Ja", (dialog, which) -> {
+                        datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0);
+                        logout = true;
+                        onBackPressed();
+                    })
+                    .setNegativeButton("Abbrechen", null)
+                    .show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (logout) {
+            super.onBackPressed();
+        }
     }
 }
