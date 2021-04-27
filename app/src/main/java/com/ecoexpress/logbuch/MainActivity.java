@@ -91,11 +91,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Get nearest Location wenn Waschsalon ausgewählt
-        int locationId = 1;
+        com.ecoexpress.logbuch.Location location = new com.ecoexpress.logbuch.Location();
         if (strLocation.equals("Waschsalon")) {
-            com.ecoexpress.logbuch.Location location = datasetController.nearestLocation(latitude, longitude);
+            location = datasetController.nearestLocation(latitude, longitude);
             strLocation = location.getName();
-            locationId = (int)location.getId();
+        } else {
+            location.setId(1);
+            location.setName(strLocation);
+            location.setLatitude(0);
+            location.setLongitude(0);
         }
 
         // create Dialog
@@ -125,17 +129,14 @@ public class MainActivity extends AppCompatActivity {
         // continue btn click
         double finalLatitude = latitude;
         double finalLongitude = longitude;
-        int finalLocationId = locationId;
-        String finalStrLocation = strLocation;
+        com.ecoexpress.logbuch.Location finalLocation = location;
         btnContinue.setOnClickListener(v -> {
             String activity = spinner.getSelectedItem().toString();
             if(!activity.equals("nicht ausgewählt")) {
                 new AlertDialog.Builder(this)   //application context crashes
                         .setTitle("Wieder Unterwegs?")
                         .setPositiveButton("Weiter", (dialog, which) -> {
-                            boolean dbResult = datasetController.writeNewDataset(
-                                    new com.ecoexpress.logbuch.Location(finalLocationId, finalStrLocation, finalLatitude, finalLongitude),
-                                    date, finalLatitude, finalLongitude, activity);
+                            boolean dbResult = datasetController.writeNewDataset(finalLocation, date, finalLatitude, finalLongitude, activity);
                             if(dbResult) {
                                 awayTime = new Date().getTime();
                                 btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));

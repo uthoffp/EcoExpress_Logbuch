@@ -47,8 +47,4 @@ public class Location {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-
-    public int distance(double latitude, double longitude) {
-        return 0;
-    }
 }

@@ -115,25 +115,4 @@ public class DatabaseController extends ContextWrapper {
             e.printStackTrace();
         }
     }
-
-    public void testInsert() throws SQLException {
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO employee (name) VALUES(?)",
-                Statement.RETURN_GENERATED_KEYS);
-        String name = "testUserName123";
-        statement.setString(1, name);
-        // ...
-
-        int affectedRows = statement.executeUpdate();
-
-        if (affectedRows == 0) {
-            return;
-        }
-
-        ResultSet generatedKeys = statement.getGeneratedKeys();
-        long id = 0;
-        if(generatedKeys.next()){
-            id = generatedKeys.getLong(1);
-        }
-    }
-
 }
