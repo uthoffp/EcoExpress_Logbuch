@@ -39,7 +39,7 @@ public class DatabaseController extends ContextWrapper {
             //Class.forName(getString(R.string.classes));
             this.connection = DriverManager.getConnection(url, getString(R.string.username), getString(R.string.password));
         } catch (SQLException e) {
-            Toast.makeText(getApplicationContext(), "Database connection failed", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Database connection failed", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }

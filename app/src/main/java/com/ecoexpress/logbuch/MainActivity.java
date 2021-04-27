@@ -60,6 +60,17 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Insert away Time to db
+        boolean dbResult;
+        if(first) {
+            dbResult = datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, "Arbeitsbeginn");
+            first = false;
+        } else {
+            dbResult = datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, null);
+        }
+
+        if(!dbResult) return;
+
         // set Button Color + Location
         Button btn = findViewById(view.getId());
         btn.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
@@ -70,15 +81,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openDialog(String strLocation) {
-        // Insert away Time to db
-        if(first) {
-            datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, "Arbeitsbeginn");
-            first = false;
-        } else {
-            datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, null);
-        }
-
-
         // GPS
         Location gpsLocation = getCurrentLocation();
         double latitude = 0;
@@ -131,13 +133,17 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)   //application context crashes
                         .setTitle("Wieder Unterwegs?")
                         .setPositiveButton("Weiter", (dialog, which) -> {
-                            datasetController.writeNewDataset(
+                            boolean dbResult = datasetController.writeNewDataset(
                                     new com.ecoexpress.logbuch.Location(finalLocationId, finalStrLocation, finalLatitude, finalLongitude),
                                     date, finalLatitude, finalLongitude, activity);
-                            awayTime = new Date().getTime();
-                            btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
-                            btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
-                            alertDialog.dismiss();
+                            if(dbResult) {
+                                awayTime = new Date().getTime();
+                                btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
+                                btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
+                                alertDialog.dismiss();
+                            } else {
+
+                            }
                         })
                         .setNegativeButton("Abbrechen", null)
                         .show();
@@ -199,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
                     .setTitle("Feierabend machen?")
                     .setPositiveButton("Ja", (dialog, which) -> {
                         if(!first) {
-                            datasetController.writeNewDataset(new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
+                            boolean dbResult = datasetController.writeNewDataset(new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
+                            if(!dbResult) return;
                         }
                         logout = true;
                         onBackPressed();

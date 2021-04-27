@@ -29,7 +29,7 @@ public class DatasetController extends ContextWrapper {
         }
     }
 
-    public void writeNewDataset(Location location, Date startTime, double latitude, double longitude, String activity) {
+    public boolean writeNewDataset(Location location, Date startTime, double latitude, double longitude, String activity) {
         Date endTime = new Date();
         int duration = duration(startTime, endTime);
         int distance = distance(latitude, longitude, location.getLatitude(), location.getLongitude());
@@ -48,11 +48,14 @@ public class DatasetController extends ContextWrapper {
             if(failCounter < 10) {
                 failCounter++;
                 database.initConnection();  //init connection again and retry
-                writeNewDataset(location, startTime, latitude, longitude, activity);
+                return writeNewDataset(location, startTime, latitude, longitude, activity);
             } else {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Internet Verbindung prüfen und erneut versuchen.", Toast.LENGTH_LONG).show();
+                failCounter = 0;
             }
+            return false;
         }
+        return true;
     }
 
     private int distance(double aLat, double aLong, double bLat, double bLong) {
