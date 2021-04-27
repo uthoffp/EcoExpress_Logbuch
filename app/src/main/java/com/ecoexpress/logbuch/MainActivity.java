@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private long awayTime;
     private com.ecoexpress.logbuch.Location awayLoc;
     private Button btnPrev;
+    private boolean first;
     private boolean logout = false;
 
     @Override
@@ -40,14 +42,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         requestLocationPermission();
         int[] userIds = getIntent().getIntArrayExtra("userIds");
+        this.first = true;
         this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         this.datasetController = new DatasetController(getApplicationContext(), userIds);
         this.btnAway = findViewById(R.id.unterwegs);
         this.btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
         this.awayTime = new Date().getTime();
-        datasetController.writeNewDataset(
-                new com.ecoexpress.logbuch.Location(1, "Arbeitsbeginn", 0, 0),
-                new Date(awayTime), 0, 0);
         this.awayLoc = new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0);
     }
 
@@ -71,7 +71,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void openDialog(String strLocation) {
         // Insert away Time to db
-        datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0);
+        if(first) {
+            datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, "Arbeitsbeginn");
+            first = false;
+        } else {
+            datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, null);
+        }
+
+
+        // GPS
+        Location gpsLocation = getCurrentLocation();
+        double latitude = 0;
+        double longitude = 0;
+        if (gpsLocation != null) {
+            latitude = gpsLocation.getLatitude();
+            longitude = gpsLocation.getLongitude();
+        }
+
+        // Get nearest Location wenn Waschsalon ausgewählt
+        int locationId = 1;
+        if (strLocation.equals("Waschsalon")) {
+            com.ecoexpress.logbuch.Location location = datasetController.nearestLocation(latitude, longitude);
+            strLocation = location.getName();
+            locationId = (int)location.getId();
+        }
 
         // create Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -83,18 +106,9 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
 
-        // GPS
-        Location gpsLocation = getCurrentLocation();
-        double latitude = 0;
-        double longitude = 0;
-        if (gpsLocation != null) {
-            latitude = gpsLocation.getLatitude();
-            longitude = gpsLocation.getLongitude();
-        }
-
         // Time
         Date date = Calendar.getInstance().getTime();
-        DateFormat timeFormat = new SimpleDateFormat("hh:mm");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm");
         String strDate = timeFormat.format(date);
 
         // set Widgets
@@ -102,25 +116,34 @@ public class MainActivity extends AppCompatActivity {
         txtLocation.setText(strLocation);
         TextView txtDate = dialogView.findViewById(R.id.dialog_txt_time);
         txtDate.setText(strDate + " Uhr");
+        Spinner spinner = dialogView.findViewById(R.id.spinner);
+        spinner.setPrompt("Tätigkeit auswählen");
         Button btnContinue = dialogView.findViewById(R.id.dialog_btn_continue);
 
         // continue btn click
         double finalLatitude = latitude;
         double finalLongitude = longitude;
+        int finalLocationId = locationId;
+        String finalStrLocation = strLocation;
         btnContinue.setOnClickListener(v -> {
-            new AlertDialog.Builder(this)   //application context crashes
-                    .setTitle("Wieder Unterwegs?")
-                    .setPositiveButton("Weiter", (dialog, which) -> {
-                        datasetController.writeNewDataset(
-                                new com.ecoexpress.logbuch.Location(1, strLocation, finalLatitude, finalLongitude),
-                                date, finalLatitude, finalLongitude);
-                        awayTime = new Date().getTime();
-                        btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
-                        btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
-                        alertDialog.dismiss();
-                    })
-                    .setNegativeButton("Abbrechen", null)
-                    .show();
+            String activity = spinner.getSelectedItem().toString();
+            if(!activity.equals("nicht ausgewählt")) {
+                new AlertDialog.Builder(this)   //application context crashes
+                        .setTitle("Wieder Unterwegs?")
+                        .setPositiveButton("Weiter", (dialog, which) -> {
+                            datasetController.writeNewDataset(
+                                    new com.ecoexpress.logbuch.Location(finalLocationId, finalStrLocation, finalLatitude, finalLongitude),
+                                    date, finalLatitude, finalLongitude, activity);
+                            awayTime = new Date().getTime();
+                            btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
+                            btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
+                            alertDialog.dismiss();
+                        })
+                        .setNegativeButton("Abbrechen", null)
+                        .show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Bitte eine Tätigkeit auswählen.", Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -175,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)   //application context crashes
                     .setTitle("Feierabend machen?")
                     .setPositiveButton("Ja", (dialog, which) -> {
-                        datasetController.writeNewDataset(new com.ecoexpress.logbuch.Location(1, "Feierabend", 0, 0), new Date(awayTime), 0, 0);
+                        if(!first) {
+                            datasetController.writeNewDataset(new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
+                        }
                         logout = true;
                         onBackPressed();
                     })

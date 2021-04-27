@@ -8,4 +8,13 @@
     <string name="database">MitarbeiterApp</string>
     <string name="username">mwolter</string>
     <string name="password">nKvLkEiMA7N0Ixl45Dzh</string>
+
+    <!-- Activitys -->
+    <string-array name="activity_array">
+        <item>nicht ausgewählt</item>
+        <item>Reperaturen</item>
+        <item>Wartungen</item>
+        <item>Rufdienst</item>
+        <item>Material geholt</item>
+    </string-array>
 </resources>

@@ -44,10 +44,10 @@ public class DatabaseController extends ContextWrapper {
         }
     }
 
-    public int insertDataset(int locationId, java.util.Date startTime, java.util.Date endTime,
-                             int duration, double latitude, double longitude, int distance) throws SQLException {
-        String insert = "INSERT INTO dataset (date, start_time, end_time, duration, latitude, longitude, distance, location_id)  " +
-                "VALUES(?,?,?,?,?,?,?,?)";
+    public int insertDataset(int locationId, java.util.Date startTime, java.util.Date endTime, int duration,
+                             double latitude, double longitude, int distance, String activity) throws SQLException {
+        String insert = "INSERT INTO dataset (date, start_time, end_time, duration, latitude, longitude, distance, activity ,location_id)  " +
+                "VALUES(?,?,?,?,?,?,?,?, ?)";
         PreparedStatement statement = connection.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
         statement.setDate(1, new java.sql.Date(startTime.getTime()));
         statement.setTime(2, new Time(startTime.getTime()));
@@ -56,7 +56,8 @@ public class DatabaseController extends ContextWrapper {
         statement.setDouble(5, latitude);
         statement.setDouble(6, longitude);
         statement.setInt(7, distance);
-        statement.setInt(8, locationId);
+        statement.setString(8, activity);
+        statement.setInt(9, locationId);
 
         int affectedRows = statement.executeUpdate();
         if (affectedRows == 0) return 0;

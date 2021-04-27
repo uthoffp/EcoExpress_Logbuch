@@ -29,7 +29,7 @@ public class DatasetController extends ContextWrapper {
         }
     }
 
-    public void writeNewDataset(Location location, Date startTime, double latitude, double longitude) {
+    public void writeNewDataset(Location location, Date startTime, double latitude, double longitude, String activity) {
         Date endTime = new Date();
         int duration = duration(startTime, endTime);
         int distance = distance(latitude, longitude, location.getLatitude(), location.getLongitude());
@@ -37,7 +37,7 @@ public class DatasetController extends ContextWrapper {
 
         try {
             int datasetId = database.insertDataset((int) location.getId(), startTime, endTime, duration,
-                    latitude, longitude, distance);
+                    latitude, longitude, distance, activity);
 
             for (int value : userId) {
                 database.insertUserInDataset(value, datasetId);
@@ -48,7 +48,7 @@ public class DatasetController extends ContextWrapper {
             if(failCounter < 10) {
                 failCounter++;
                 database.initConnection();  //init connection again and retry
-                writeNewDataset(location, startTime, latitude, longitude);
+                writeNewDataset(location, startTime, latitude, longitude, activity);
             } else {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -56,15 +56,35 @@ public class DatasetController extends ContextWrapper {
     }
 
     private int distance(double aLat, double aLong, double bLat, double bLong) {
-        return 0;
+        if(aLat == 0 || aLong == 0 || bLat == 0 || bLong == 0) {
+            return 0;
+        }
+
+        double theta = aLong - bLong;
+        double dist = Math.sin(deg2rad(aLat)) * Math.sin(deg2rad(bLat)) + Math.cos(deg2rad(aLat)) * Math.cos(deg2rad(bLat)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515 * 1.609344 * 1000;
+        return (int)dist;
     }
 
     private int duration(Date start, Date end) {
         return (int) (((end.getTime() / 1000) - (start.getTime() / 1000)) / 60);
     }
 
-    public Location nearestLocation(double latitude, double longitude) {
-        return new Location(0, null, 0, 0);
+    public Location nearestLocation(double gpsLat, double gpsLong) {
+        int minDistance = Integer.MAX_VALUE;
+        int tmpDistance = 0;
+        Location result = new Location();
+
+        for (Location location : locations) {
+            tmpDistance = distance(gpsLat, gpsLong, location.getLatitude(), location.getLongitude());
+            if(tmpDistance < minDistance && tmpDistance != 0) {
+                minDistance = tmpDistance;
+                result = location;
+            }
+        }
+        return result;
     }
 
     private long getLocationId(String strLocation) {
@@ -74,5 +94,13 @@ public class DatasetController extends ContextWrapper {
             }
         }
         return 0;
+    }
+
+    private double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    private double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
     }
 }
