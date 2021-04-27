@@ -60,7 +60,7 @@ public class DatasetController extends ContextWrapper {
     }
 
     private int duration(Date start, Date end) {
-        return (int) ((end.getTime() / 1000) - (start.getTime() / 1000));
+        return (int) (((end.getTime() / 1000) - (start.getTime() / 1000)) / 60);
     }
 
     public Location nearestLocation(double latitude, double longitude) {

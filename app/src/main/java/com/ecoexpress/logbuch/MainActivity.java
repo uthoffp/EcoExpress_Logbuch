@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         this.btnAway = findViewById(R.id.unterwegs);
         this.btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
         this.awayTime = new Date().getTime();
+        datasetController.writeNewDataset(
+                new com.ecoexpress.logbuch.Location(1, "Arbeitsbeginn", 0, 0),
+                new Date(awayTime), 0, 0);
         this.awayLoc = new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0);
     }
 
@@ -172,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)   //application context crashes
                     .setTitle("Feierabend machen?")
                     .setPositiveButton("Ja", (dialog, which) -> {
-                        datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0);
+                        datasetController.writeNewDataset(new com.ecoexpress.logbuch.Location(1, "Feierabend", 0, 0), new Date(awayTime), 0, 0);
                         logout = true;
                         onBackPressed();
                     })

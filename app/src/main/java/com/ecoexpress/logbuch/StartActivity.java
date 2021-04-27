@@ -71,4 +71,9 @@ public class StartActivity extends AppCompatActivity {
         intent.putExtra("userIds", userarr);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 }
