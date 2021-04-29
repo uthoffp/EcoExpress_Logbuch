@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
@@ -26,9 +28,17 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        try{
+            String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            TextView txtVersion = findViewById(R.id.start_txt_version);
+            txtVersion.setText(versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         this.employees = new HashMap<>();
         this.userIds = new ArrayList<>();
         this.layout = findViewById(R.id.start_layout_employees);
+
         getEmployeesFromDatabase();
     }
 
