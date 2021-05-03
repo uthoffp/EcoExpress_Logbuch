@@ -1,14 +1,11 @@
-package com.ecoexpress.logbuch;
+package com.uthoff.logbuch;
 
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.widget.Toast;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class DatasetController extends ContextWrapper {
@@ -45,7 +42,7 @@ public class DatasetController extends ContextWrapper {
             failCounter = 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            if(failCounter < 10) {
+            if (failCounter < 10) {
                 failCounter++;
                 database.initConnection();  //init connection again and retry
                 return writeNewDataset(location, startTime, latitude, longitude, activity);
@@ -59,7 +56,7 @@ public class DatasetController extends ContextWrapper {
     }
 
     private int distance(double aLat, double aLong, double bLat, double bLong) {
-        if(aLat == 0 || aLong == 0 || bLat == 0 || bLong == 0) {
+        if (aLat == 0 || aLong == 0 || bLat == 0 || bLong == 0) {
             return 0;
         }
 
@@ -68,7 +65,7 @@ public class DatasetController extends ContextWrapper {
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515 * 1.609344 * 1000;
-        return (int)dist;
+        return (int) dist;
     }
 
     private int duration(Date start, Date end) {
@@ -82,7 +79,7 @@ public class DatasetController extends ContextWrapper {
 
         for (Location location : locations) {
             tmpDistance = distance(gpsLat, gpsLong, location.getLatitude(), location.getLongitude());
-            if(tmpDistance < minDistance && tmpDistance != 0) {
+            if (tmpDistance < minDistance && tmpDistance != 0) {
                 minDistance = tmpDistance;
                 result = location;
             }
@@ -91,7 +88,7 @@ public class DatasetController extends ContextWrapper {
     }
 
     private long getLocationId(String strLocation) {
-        for(Location location : locations) {
+        for (Location location : locations) {
             if (location.getName().equals(strLocation)) {
                 return location.getId();
             }

@@ -1,4 +1,4 @@
-package com.ecoexpress.logbuch;
+package com.uthoff.logbuch;
 
 public class Location {
     private long id;

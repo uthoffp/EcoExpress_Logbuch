@@ -1,12 +1,12 @@
-package com.ecoexpress.logbuch;
+package com.uthoff.logbuch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -28,8 +28,9 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        try{
+        try {
             String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            versionName += " " + getString(R.string.company_name);
             TextView txtVersion = findViewById(R.id.start_txt_version);
             txtVersion.setText(versionName);
         } catch (PackageManager.NameNotFoundException e) {

@@ -1,4 +1,4 @@
-package com.ecoexpress.logbuch;
+package com.uthoff.logbuch;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAway;
     private DatasetController datasetController;
     private long awayTime;
-    private com.ecoexpress.logbuch.Location awayLoc;
+    private com.uthoff.logbuch.Location awayLoc;
     private Button btnPrev;
     private boolean first;
     private boolean logout = false;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         this.btnAway = findViewById(R.id.unterwegs);
         this.btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
         this.awayTime = new Date().getTime();
-        this.awayLoc = new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0);
+        this.awayLoc = new com.uthoff.logbuch.Location(1, "Unterwegs", 0, 0);
     }
 
     public void onClick(View view) {
@@ -62,14 +62,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Insert away Time to db
         boolean dbResult;
-        if(first) {
+        if (first) {
             dbResult = datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, "Arbeitsbeginn");
             first = false;
         } else {
             dbResult = datasetController.writeNewDataset(awayLoc, new Date(awayTime), 0, 0, null);
         }
 
-        if(!dbResult) return;
+        if (!dbResult) return;
 
         // set Button Color + Location
         Button btn = findViewById(view.getId());
@@ -90,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
             longitude = gpsLocation.getLongitude();
         }
 
-        // Get nearest Location wenn Waschsalon ausgewählt
-        com.ecoexpress.logbuch.Location location = new com.ecoexpress.logbuch.Location();
+        // Get nearest Location wenn Waschsalon ausgewaehlt
+        com.uthoff.logbuch.Location location = new com.uthoff.logbuch.Location();
         if (strLocation.equals("Waschsalon")) {
             location = datasetController.nearestLocation(latitude, longitude);
             strLocation = location.getName();
@@ -129,15 +129,15 @@ public class MainActivity extends AppCompatActivity {
         // continue btn click
         double finalLatitude = latitude;
         double finalLongitude = longitude;
-        com.ecoexpress.logbuch.Location finalLocation = location;
+        com.uthoff.logbuch.Location finalLocation = location;
         btnContinue.setOnClickListener(v -> {
             String activity = spinner.getSelectedItem().toString();
-            if(!activity.equals("nicht ausgewählt")) {
+            if (!activity.equals("nicht ausgewählt")) {
                 new AlertDialog.Builder(this)   //application context crashes
                         .setTitle("Wieder Unterwegs?")
                         .setPositiveButton("Weiter", (dialog, which) -> {
                             boolean dbResult = datasetController.writeNewDataset(finalLocation, date, finalLatitude, finalLongitude, activity);
-                            if(dbResult) {
+                            if (dbResult) {
                                 awayTime = new Date().getTime();
                                 btnPrev.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_500));
                                 btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
@@ -205,9 +205,9 @@ public class MainActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)   //application context crashes
                     .setTitle("Feierabend machen?")
                     .setPositiveButton("Ja", (dialog, which) -> {
-                        if(!first) {
-                            boolean dbResult = datasetController.writeNewDataset(new com.ecoexpress.logbuch.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
-                            if(!dbResult) return;
+                        if (!first) {
+                            boolean dbResult = datasetController.writeNewDataset(new com.uthoff.logbuch.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
+                            if (!dbResult) return;
                         }
                         logout = true;
                         onBackPressed();
