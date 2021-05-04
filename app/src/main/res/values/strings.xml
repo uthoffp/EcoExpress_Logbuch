@@ -1,14 +1,14 @@
 <resources>
-    <string name="company_name">Test</string>
+    <string name="company_name">WB-Waschsalons</string>
     <string name="app_name">Logbuch</string>
 
     <!-- Database Connection Infos -->
     <string name="ip">msupportsql.database.windows.net</string>
     <string name="port">1433</string>
     <string name="classes">net.sourcefrog.jtds.jdbc.Driver</string>
-    <string name="database">db_test</string>
-    <string name="username">testdatabase</string>
-    <string name="password">Montag123</string>
+    <string name="database">db_wbw</string>
+    <string name="username">wbwdatabase</string>
+    <string name="password">dIpj9bZnMLwkQ150TFWz</string>
 
     <!-- Activitys -->
     <string-array name="activity_array">
