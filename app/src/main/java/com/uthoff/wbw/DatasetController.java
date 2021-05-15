@@ -1,4 +1,4 @@
-package com.uthoff.logbuch;
+package com.uthoff.wbw;
 
 import android.content.Context;
 import android.content.ContextWrapper;

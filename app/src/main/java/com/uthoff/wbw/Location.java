@@ -1,4 +1,4 @@
-package com.uthoff.logbuch;
+package com.uthoff.wbw;
 
 public class Location {
     private long id;

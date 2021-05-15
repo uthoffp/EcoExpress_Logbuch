@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.uthoff.logbuch">
+    package="com.uthoff.wbw">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,13 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Logbuch">
-        <activity android:name="com.uthoff.logbuch.StartActivity">
+        <activity android:name="com.uthoff.wbw.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.uthoff.logbuch.MainActivity" />
+        <activity android:name="com.uthoff.wbw.MainActivity" />
     </application>
 
 </manifest>
