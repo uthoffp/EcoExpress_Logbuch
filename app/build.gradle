@@ -5,7 +5,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.uthoff.logbuch"
+        applicationId "com.uthoff.jnw"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 6

@@ -1,4 +1,4 @@
-package com.uthoff.logbuch;
+package com.uthoff.jnw;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnAway;
     private DatasetController datasetController;
     private long awayTime;
-    private com.uthoff.logbuch.Location awayLoc;
+    private com.uthoff.jnw.Location awayLoc;
     private Button btnPrev;
     private boolean first;
     private boolean logout = false;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         this.btnAway = findViewById(R.id.unterwegs);
         this.btnAway.setBackgroundColor(ContextCompat.getColor(this, R.color.green));
         this.awayTime = new Date().getTime();
-        this.awayLoc = new com.uthoff.logbuch.Location(1, "Unterwegs", 0, 0);
+        this.awayLoc = new com.uthoff.jnw.Location(1, "Unterwegs", 0, 0);
     }
 
     public void onClick(View view) {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Get nearest Location wenn Waschsalon ausgewaehlt
-        com.uthoff.logbuch.Location location = new com.uthoff.logbuch.Location();
+        com.uthoff.jnw.Location location = new com.uthoff.jnw.Location();
         if (strLocation.equals("Waschsalon")) {
             location = datasetController.nearestLocation(latitude, longitude);
             strLocation = location.getName();
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         // continue btn click
         double finalLatitude = latitude;
         double finalLongitude = longitude;
-        com.uthoff.logbuch.Location finalLocation = location;
+        com.uthoff.jnw.Location finalLocation = location;
         btnContinue.setOnClickListener(v -> {
             String activity = spinner.getSelectedItem().toString();
             if (!activity.equals("nicht ausgewählt")) {
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     .setTitle("Feierabend machen?")
                     .setPositiveButton("Ja", (dialog, which) -> {
                         if (!first) {
-                            boolean dbResult = datasetController.writeNewDataset(new com.uthoff.logbuch.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
+                            boolean dbResult = datasetController.writeNewDataset(new com.uthoff.jnw.Location(1, "Unterwegs", 0, 0), new Date(awayTime), 0, 0, "Feierabend");
                             if (!dbResult) return;
                         }
                         logout = true;
